@@ -106,12 +106,30 @@ class Main extends PluginBase implements Listener {
 				$packet->formData = $handler->getWindowJson(Handler::KIT_MAIN_MENU, $this, $sender);
 				$sender->dataPacket($packet);
 				break;
+
+            case "rekit":
+                $playerKit = $this->getPlayerKit($sender);
+                if ($playerKit === null) {
+                    $sender->sendMessage(TextFormat::RED."You do not have an active kit equipped..");
+                    return false;
+                }
+
+                $activeKit = $this->getKit($playerKit);
+                if ($activeKit === null) {
+                    $sender->sendMessage(TextFormat::RED."You do not have an active kit equipped..");
+                    return false;
+                }
+
+                /** @noinspection PhpUnhandledExceptionInspection */
+                $activeKit->equipKit($sender);
+                $sender->sendMessage(TextFormat::GREEN."You re-filled your kit!");
+                break;
 		}
 
 		return true;
 	}
 
-	public function getPlayerKit($player, $obj = false){
+	public function getPlayerKit($player, $obj = false) : ?string {
 		if($player instanceof Player){
 			$player = $player->getName();
 		}

@@ -16,3 +16,5 @@ permissions: # kit permissions - kit.<kit name>
 commands:
   kit:
     description: Kit UI!
+  rekit:
+    description: Re-apply kit
