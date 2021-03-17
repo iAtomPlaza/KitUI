@@ -2,3 +2,4 @@
 .poggit.yml
 icon.png
 .gitignore
+.idea/*
