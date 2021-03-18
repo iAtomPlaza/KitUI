@@ -25,18 +25,25 @@ class PlayerEvents implements Listener {
 	}
 
 	public function onTap(PlayerInteractEvent $event){
+	    $player = $event->getPlayer();
 		$id = $event->getBlock()->getId();
 		if($id === Block::SIGN_POST or $id === Block::WALL_SIGN){
 			$tile = $event->getPlayer()->getLevel()->getTile($event->getBlock());
 			if($tile instanceof Sign){
 				$text = $tile->getText();
 				if(strtolower(TextFormat::clean($text[0])) === strtolower($this->pl->config->get("text-on-sign"))){
-					$event->setCancelled();
-					$handler = new Handler();
-					$packet = new ModalFormRequestPacket();
-					$packet->formId = $handler->getWindowIdFor(Handler::KIT_MAIN_MENU);
-					$packet->formData = $handler->getWindowJson(Handler::KIT_MAIN_MENU, $this->pl, $event->getPlayer());
-					$event->getPlayer()->dataPacket($packet);
+				    $kit = $this->pl->getKit(TextFormat::clean($text[1]));
+				    if ($kit === null) {
+				        $event->setCancelled();
+				        $player->sendMessage(TextFormat::RED."Unknown kit..");
+				        return;
+                    }
+
+				    $event->setCancelled();
+                    $player->sendMessage(TextFormat::GREEN."Selected kit: $text[1]");
+
+                    /** @noinspection PhpUnhandledExceptionInspection */
+                    $kit->equipKit($player);
 				}
 			}
 		}
